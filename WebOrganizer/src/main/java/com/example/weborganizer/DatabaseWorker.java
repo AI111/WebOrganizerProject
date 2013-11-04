@@ -1,5 +1,6 @@
 package com.example.weborganizer;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -13,7 +14,7 @@ public class DatabaseWorker extends SQLiteOpenHelper{
             "email CHAR(50), pass char(20))";
     private static String TASKS = "CREATE TABLE Task(id_User INTEGER, Task_title VARCHAR(80), Text TEXT," +
             "Time DATETIME, Last_Editing DATETIME, Editing_Type TINYINT, Filter_Id TINYINT)";
-    private static String FILTERS = "CREATE TABLE Filters ( Filter_Name VARCHAR(30), TINYINT INTEGER PRIMARY KEY)";
+    private static String FILTERS = "CREATE TABLE Filters ( Filter_Name VARCHAR(30),Filter_id  TINYINT PRIMARY KEY  NOT NULL)";
     private static String CONTACTS = "CREATE TABLE Contacts ( Filter_Name VARCHAR(30), TINYINT INTEGER PRIMARY KEY)";
     private static String USER_OPTIONS = "CREATE TABLE UserOptions ( User_id INTEGER, Last_Sync_Date DATETIME)";
     public DatabaseWorker(Context context) {
@@ -27,6 +28,13 @@ public class DatabaseWorker extends SQLiteOpenHelper{
         db.execSQL(CONTACTS);
         db.execSQL(FILTERS);
         db.execSQL(USER_OPTIONS);
+//        db.execSQL("INSERT INTO Filters VALUES (Дом,0)");
+//        db.execSQL("INSERT INTO Filters VALUES (Работа,1)");
+//        db.execSQL("INSERT INTO Filters VALUES (Личное,2)");
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("Filter_Name","ДОМ");
+        contentValues.put("Filter_Name","H");
+        db.insert("Filters",null,contentValues);
 
 
     }

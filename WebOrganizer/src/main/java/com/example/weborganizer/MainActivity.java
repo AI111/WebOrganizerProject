@@ -1,32 +1,30 @@
 package com.example.weborganizer;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.list2.R;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends FragmentActivity implements OnClickListener {
 	 static ArrayList<ArrayList<String>> groups = new ArrayList<ArrayList<String>>();
@@ -98,6 +96,15 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		      //Toast.makeText(this, "Today is " + myDay + "/" + myMonth + "/" + myYear, Toast.LENGTH_SHORT).ma
 		    }
 		    };
+        DatabaseWorker databaseWorker = new DatabaseWorker(this);
+        SQLiteDatabase database= databaseWorker.getReadableDatabase();
+
+        Cursor cursor  = database.rawQuery("SELECT Filter_id  FROM Filters",null);
+        if(cursor!=null){
+            Log.d("D_B", ""+cursor.getInt((cursor.getColumnIndex("Filter_Name"))));
+
+           // Log.d("D_B", cursor.getString(cursor.getColumnIndex("Filter_Name")));
+        }
 	}
 
 	@Override
