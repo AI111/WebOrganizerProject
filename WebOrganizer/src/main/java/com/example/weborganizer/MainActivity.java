@@ -3,7 +3,6 @@ package com.example.weborganizer;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +10,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -97,14 +95,27 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		    }
 		    };
         DatabaseWorker databaseWorker = new DatabaseWorker(this);
-        SQLiteDatabase database= databaseWorker.getReadableDatabase();
+        SQLiteDatabase database= databaseWorker.getWritableDatabase();
 
-        Cursor cursor  = database.rawQuery("SELECT Filter_id  FROM Filters",null);
-        if(cursor!=null){
-            Log.d("D_B", ""+cursor.getInt((cursor.getColumnIndex("Filter_Name"))));
-
-           // Log.d("D_B", cursor.getString(cursor.getColumnIndex("Filter_Name")));
-        }
+//        ContentValues contentValues = new ContentValues();
+//        contentValues.put("Filter_Name","ДОМ");
+//        contentValues.put("Filter_id","3");
+//        database.insert("Filters",null,contentValues);
+//        database.close();
+//        database= databaseWorker.getReadableDatabase();
+//        Cursor cursor  = database.rawQuery("SELECT Filter_Name  FROM Filters",null);
+//        int i =cursor.getColumnIndex("Filter_Name");
+//        Log.d("D_B", cursor.getColumnCount()+" "+Arrays.toString(cursor.getColumnNames())/*cursor.getInt(cursor.getColumnIndex("Filter_Name"))*/);
+//if(cursor.moveToFirst()){
+//    do{
+//        Log.d("Filter Name",cursor.getString(i));
+//    }while(cursor.moveToLast());
+//            cursor.moveToFirst();
+//
+//
+//            //Log.d("D_B",""+ cursor.isNull(i));
+//
+//        }
 	}
 
 	@Override
