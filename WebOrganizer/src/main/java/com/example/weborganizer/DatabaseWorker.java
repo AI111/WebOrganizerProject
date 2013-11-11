@@ -1,6 +1,5 @@
 package com.example.weborganizer;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -201,9 +200,28 @@ public ArrayList<Task> getTasks()
         database.close();
         return ans;
     }
-    public void entherTsak(Task task){
-        ContentValues values =new ContentValues();
-        values.put(collTaskTitle,task.taskTitle);
+    public void insertTsak(Task task){
+        ArrayList<Task> ans=new ArrayList<Task>();
+        SQLiteDatabase database= this.getWritableDatabase();
+        database.execSQL("INSERT INTO "+tableTask+" ("+collTaskTitle+", "+collTaskText+", "+collTaskTime+", "+collTaskDate+", "+
+                collTaskLast_Editing+", "+collTaskEditType+", "+collTaskFilter+", "+collUserId+")"+
+                " VALUES ('"+
+                task.taskTitle
+                +"', '"+
+                task.taskText
+                +"', '"
+                +task.taskTime
+                +"', '"+
+                task.taskDate
+                +"', "+
+                "datetime(1092941466, 'unixepoch')"
+                +", '"+
+                "0"
+                +"', '"+
+                task.taskFilterId
+                +"', '"+
+                task.userId
+                +"');");
 
     }
 }

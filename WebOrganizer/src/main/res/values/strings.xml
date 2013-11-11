@@ -14,5 +14,7 @@
     <string name="item3">Item3</string>
     <string name="item4">Item4</string>
 
+    <string name="incorect_title">введите название</string>
+
 
 </resources>

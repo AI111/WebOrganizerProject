@@ -12,14 +12,28 @@
         android:layout_height="wrap_content"
         android:id="@+id/editText"
         android:layout_gravity="center_horizontal"
-        android:hint="@string/enter_title" />
+        android:hint="@string/enter_title"
+        android:layout_margin="5dp" />
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText2"
         android:autoText="false"
-        android:hint="@string/enter_text" />
+        android:hint="@string/enter_text"
+        android:layout_margin="5dp" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/textView6"
+        android:editable="false"
+        android:singleLine="true"
+        android:accessibilityLiveRegion="none"
+        android:background="@drawable/abc_cab_background_top_holo_light"
+        android:layout_margin="5dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -28,7 +42,21 @@
         android:text="Дата"
         android:id="@+id/textView2"
         android:onClick="onclick"
-        android:clickable="true" />
+        android:clickable="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center|left" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/textView4"
+        android:layout_margin="5dp"
+        android:background="@drawable/abc_cab_background_top_holo_light" />
 
     <TextView
         android:layout_width="match_parent"
@@ -37,10 +65,36 @@
         android:text="Время"
         android:id="@+id/textView3"
         android:clickable="true"
-        android:onClick="onclick" />
+        android:onClick="onclick"
+        android:layout_margin="5dp"
+        style="@style/TextAppearance.AppCompat.Base.SearchResult"
+        android:gravity="left" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/textView5"
+        android:layout_margin="5dp"
+        android:background="@drawable/abc_cab_background_top_holo_light" />
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner1" />
+        android:id="@+id/spinner1"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/textView"
+        style="@style/TextAppearance.AppCompat.Base.SearchResult"
+        android:lines="@integer/abc_max_action_buttons"
+        android:singleLine="false"
+        android:textAlignment="center"
+        android:typeface="normal"
+        android:visibility="visible" />
 </LinearLayout>

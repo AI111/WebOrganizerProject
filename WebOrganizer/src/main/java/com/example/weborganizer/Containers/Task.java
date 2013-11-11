@@ -4,14 +4,14 @@ package com.example.weborganizer.Containers;
  * Created by Sasha on 10.11.13.
  */
 public class Task {
-public final String taskTitle;
-public final String taskText;
-public final String taskTime;
-public final String taskDate;
-public final String lastTaskLastEditing;
-public final int taskFilterId;
-public final byte taskEditType;
-public final int userId;
+public  String taskTitle;
+public  String taskText;
+public  String taskTime;
+public  String taskDate;
+public  String lastTaskLastEditing;
+public  int taskFilterId;
+public  byte taskEditType;
+public  int userId;
 public Task(String taskTitle,String taskText,String taskTime,String taskDate,String lastTaskLastEditing,byte taskEditType,
             int taskFilterId,int userId ){
     this.taskTitle=taskTitle;
@@ -27,7 +27,7 @@ public Task(String taskTitle,String taskText,String taskTime,String taskDate,Str
 
     @Override
     public String toString() {
-        return taskTitle+"\n "+taskText+"\n "+taskTime+"\n "+taskDate+"\n "+lastTaskLastEditing+"\n "+
-                taskEditType+"\n"+taskFilterId+"\n "+userId;
+        return taskTitle+" "+taskText+"  "+taskTime+"  "+taskDate+" "+lastTaskLastEditing+"  "+
+                taskEditType+" "+taskFilterId+"  "+userId;
     }
 }
