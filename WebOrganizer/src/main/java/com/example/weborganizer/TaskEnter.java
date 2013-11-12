@@ -145,7 +145,7 @@ public class TaskEnter extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mainInsert, menu);
+        getMenuInflater().inflate(R.menu.main_insert, menu);
         return true;
     }
 

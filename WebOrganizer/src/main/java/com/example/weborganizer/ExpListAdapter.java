@@ -1,6 +1,7 @@
 package com.example.weborganizer;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,16 +11,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.list2.R;
+import com.example.weborganizer.Containers.Task;
 
 import java.util.ArrayList;
 
 public class ExpListAdapter extends BaseExpandableListAdapter {
-	private ArrayList<ArrayList<String>> mGroups;
+	private ArrayList<ArrayList<Task>> mGroups;
+    private ArrayList<String> groupeNames;
     private Context mContext;
     LinearLayout previosLL;
-    public ExpListAdapter (Context context,ArrayList<ArrayList<String>> groups){
+    public ExpListAdapter (Context context,ArrayList<ArrayList<Task>> groups, ArrayList<String> groupeNames){
         mContext = context;
         mGroups = groups;
+        this.groupeNames=groupeNames;
+        Log.d("ARR",groups.toString());
     }
     
     @Override
@@ -74,7 +79,7 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
         }
 
         TextView textGroup = (TextView) convertView.findViewById(R.id.textGroup);
-        textGroup.setText("Group " + Integer.toString(groupPosition));
+        textGroup.setText(groupeNames.get(groupPosition));
 
         return convertView;
 
@@ -91,8 +96,9 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
 		//convertView.setAnimation(animation);
 		//animation=null;
         //final LinearLayout lr =(LinearLayout)convertView.findViewById(R.id.linearLayout22);
+        //Log.d("CHILD",mGroups.get(1).get(childPosition).toString());
         TextView textChild = (TextView) convertView.findViewById(R.id.textChild);
-        textChild.setText(mGroups.get(groupPosition).get(childPosition));
+        textChild.setText(mGroups.get(groupPosition).get(childPosition).taskTitle);
         final LinearLayout lr =(LinearLayout)convertView.findViewById(R.id.linearLayout22);
     	lr.setVisibility(View.GONE);
 

@@ -4,12 +4,14 @@
               android:layout_height="match_parent">
     <TextView
             android:id="@+id/textGroup"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
             android:textColor="@android:color/black"
             android:textStyle="bold"
 
         android:text="1"
-        android:layout_marginLeft="50dp" />
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="22dp" />
 </LinearLayout>

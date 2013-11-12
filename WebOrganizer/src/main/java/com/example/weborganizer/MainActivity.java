@@ -3,7 +3,7 @@ package com.example.weborganizer;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -20,14 +21,15 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 
 import com.example.list2.R;
+import com.example.weborganizer.Containers.Task;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends FragmentActivity implements OnClickListener {
-	 static ArrayList<ArrayList<String>> groups = new ArrayList<ArrayList<String>>();
-	    ArrayList<String> children1 = new ArrayList<String>();
-	    ArrayList<String> children2 = new ArrayList<String>();
+	 static ArrayList<ArrayList<ArrayList<Task>>> groups = new ArrayList<ArrayList<ArrayList<Task>>>();
+	    static ArrayList<String> groupeNames = new ArrayList<String>();
+
 	    
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -55,26 +57,29 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		DatePickerDialog tpd = new DatePickerDialog(this, myCallBack, myYear, myMonth, myDay);
         return tpd;
 	}
-	@Override
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.item1:
+                Intent intent = new Intent(this,TaskEnter.class);
+                startActivity(intent);
+
+                break;
+            case R.id.item2:
+                DatabaseWorker databaseWorker = new DatabaseWorker(this);
+                databaseWorker.printTable(DatabaseWorker.tableTask);
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		
-		groups.clear();
-        children1.clear();
-        children2.clear();
-
-
-        children1.add("Child_1");
-        children1.add("Child_2");
-        groups.add(children1);
-        children2.add("Child_1");
-        children2.add("Child_2");
-        children2.add("Child_3");
-        groups.add(children2);
-        
-//       
         //imageButton5= (ImageButton)findViewById(R.id.imageButton);
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
@@ -95,27 +100,12 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		    }
 		    };
         DatabaseWorker databaseWorker = new DatabaseWorker(this);
-        SQLiteDatabase database= databaseWorker.getWritableDatabase();
-
-//        ContentValues contentValues = new ContentValues();
-//        contentValues.put("Filter_Name","ДОМ");
-//        contentValues.put("Filter_id","3");
-//        database.insert("Filters",null,contentValues);
-//        database.close();
-//        database= databaseWorker.getReadableDatabase();
-//        Cursor cursor  = database.rawQuery("SELECT Filter_Name  FROM Filters",null);
-//        int i =cursor.getColumnIndex("Filter_Name");
-//        Log.d("D_B", cursor.getColumnCount()+" "+Arrays.toString(cursor.getColumnNames())/*cursor.getInt(cursor.getColumnIndex("Filter_Name"))*/);
-//if(cursor.moveToFirst()){
-//    do{
-//        Log.d("Filter Name",cursor.getString(i));
-//    }while(cursor.moveToLast());
-//            cursor.moveToFirst();
-//
-//
-//            //Log.d("D_B",""+ cursor.isNull(i));
-//
-//        }
+        groups.add(databaseWorker.getLists(0));
+        groups.add(databaseWorker.getLists(1));
+        groups.add(databaseWorker.getLists(2));
+        groupeNames.add(getString(R.string.yesterday));
+        groupeNames.add(getString(R.string.today));
+        groupeNames.add(getString(R.string.tomorrow));
 	}
 
 	@Override
@@ -212,16 +202,19 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
+
+
 			 View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 	            ExpandableListView listView = (ExpandableListView)rootView.findViewById(R.id.expandableListView);
 	            
-	            
+	          int fragmentID= (int) getArguments().getInt(ARG_SECTION_NUMBER);
+
 	         //   imageButton1= (ImageButton)rootView.findViewById(R.id.imageButton);
 	         //  imageButton1.setOnClickListener(clickListener);
 	            //������� ����� ������ ��� ��������
 	            	
 	            //������� ������� � �������� context � ������ � �������
-	            ExpListAdapter adapter = new ExpListAdapter(rootView.getContext(), groups);
+	            ExpListAdapter adapter = new ExpListAdapter(rootView.getContext(), groups.get(--fragmentID),groupeNames);
 	            listView.setAdapter(adapter);
 	            
 	            View rootView1 = inflater.inflate(R.layout.child_view, container, false);
@@ -234,12 +227,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	          imageButton2.setOnClickListener(clickListener);
 	          imageButton3.setOnClickListener(clickListener);
 	          imageButton4.setOnClickListener(clickListener);
-//			View rootView = inflater.inflate(R.layout.fragment_main_dummy,
-//					container, false);
-//			TextView dummyTextView = (TextView) rootView
-//					.findViewById(R.id.section_label);
-//			dummyTextView.setText(Integer.toString(getArguments().getInt(
-//					ARG_SECTION_NUMBER)));
+
 			return rootView;
 		}
 	}
@@ -249,5 +237,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 	
 	}
+
 
 }

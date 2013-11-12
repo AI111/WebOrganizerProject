@@ -201,8 +201,10 @@ public ArrayList<Task> getTasks()
         return ans;
     }
     public void insertTsak(Task task){
-        ArrayList<Task> ans=new ArrayList<Task>();
+
         SQLiteDatabase database= this.getWritableDatabase();
+        try{
+
         database.execSQL("INSERT INTO "+tableTask+" ("+collTaskTitle+", "+collTaskText+", "+collTaskTime+", "+collTaskDate+", "+
                 collTaskLast_Editing+", "+collTaskEditType+", "+collTaskFilter+", "+collUserId+")"+
                 " VALUES ('"+
@@ -222,6 +224,75 @@ public ArrayList<Task> getTasks()
                 +"', '"+
                 task.userId
                 +"');");
+        }catch (Exception e){
 
+        }
+        finally {
+            database.close();
+        }
+    }
+    public ArrayList<ArrayList<Task>>  getLists(int filterGroupe)
+    {
+        ArrayList<ArrayList<Task>> ans = new ArrayList<ArrayList<Task>>();
+        SQLiteDatabase database= this.getReadableDatabase();
+        String[] querys={   "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" <= DATE('now', '-1 day')",
+                            "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" = DATE('now')",
+                            "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" >= DATE('now', '+1 day')"
+        };
+//+collTaskFilter+" = "+filterGroupe+" AND "+collTaskDate
+
+        for(String query:querys){
+            Cursor cursor  = database.rawQuery(query,null);
+            ArrayList<Task> groupe = new ArrayList<Task>();
+
+
+                int col1 =cursor.getColumnIndex(collTaskTitle);
+                int col2=cursor.getColumnIndex(collTaskText);
+                int col3 =cursor.getColumnIndex(collTaskTime);
+                int col4 =cursor.getColumnIndex(collTaskDate);
+                int col5=cursor.getColumnIndex(collTaskLast_Editing);
+                int col6 =cursor.getColumnIndex(collTaskEditType);
+                int col7 =cursor.getColumnIndex(collTaskFilter);
+                int col8=cursor.getColumnIndex(collUserId);
+                if(cursor.moveToFirst()){
+                    do{
+                        Log.d("ADD","");
+                        groupe.add(new Task(cursor.getString(col1),cursor.getString(col2),cursor.getString(col3),cursor.getString(col4),
+                        cursor.getString(col5),(byte)cursor.getShort(col6),cursor.getInt(col7),cursor.getInt(col8)));
+                        Log.d("COLL_ADD",cursor.getString(col4));
+                      }while(cursor.moveToNext());
+
+             }
+
+            ans.add(groupe);
+
+        }
+        return ans;
+    }
+    public void printTable(String table){
+        SQLiteDatabase database= this.getReadableDatabase();
+        Cursor cursor  = database.rawQuery("SELECT *  FROM "+table,null);
+
+
+        String[] cools =cursor.getColumnNames();
+        int[] collsNum=new int[cools.length];
+
+        for(int i :collsNum){
+            i=cursor.getColumnIndex(cools[i]);
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if(cursor.moveToFirst()){
+            do{
+                for(int i:collsNum){
+                stringBuilder.append(cursor.getString(i)).append(" | ");
+                }
+                stringBuilder.append("/n");
+
+
+            }while(cursor.moveToNext());
+            Log.d(table,stringBuilder.toString());
+    }
+        database.close();
     }
 }
