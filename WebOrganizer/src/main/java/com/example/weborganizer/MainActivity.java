@@ -1,8 +1,11 @@
 package com.example.weborganizer;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,10 +21,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 
 import com.example.list2.R;
+import com.example.weborganizer.Containers.Filter;
 import com.example.weborganizer.Containers.Task;
 
 import java.util.ArrayList;
@@ -45,6 +51,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	  int myYear = 2011;
 	  int myMonth = 02;
 	  int myDay = 03;
+    int numberOfFragments;
+    private Context context;
+    private ArrayList<Filter> pageTitles;
+
 	/**
 	 * The {@link android.support.v4.view.ViewPager} that will host the section contents.
 	 */
@@ -67,8 +77,37 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 
                 break;
             case R.id.item2:
-                DatabaseWorker databaseWorker = new DatabaseWorker(this);
-                databaseWorker.printTable(DatabaseWorker.tableTask);
+//                DatabaseWorker databaseWorker = new DatabaseWorker(this);
+//                databaseWorker.printTable(DatabaseWorker.tableFilter);
+//                databaseWorker.printTable(DatabaseWorker.tableTask);
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+                alert.setTitle("Title");
+                alert.setMessage("Message");
+
+// Set an EditText view to get user input
+                final EditText input = new EditText(this);
+                alert.setView(input);
+
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String value = input.getText().toString();
+                        Log.d("DIALOG",value);
+                        DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
+                        databaseWorker.printTable(DatabaseWorker.tableFilter);
+                        databaseWorker.insertFilter(0,value);
+                        databaseWorker.printTable(DatabaseWorker.tableFilter);
+                        // Do something with value!
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                    }
+                });
+
+                alert.show();
                 break;
 
         }
@@ -100,12 +139,18 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		    }
 		    };
         DatabaseWorker databaseWorker = new DatabaseWorker(this);
-        groups.add(databaseWorker.getLists(0));
-        groups.add(databaseWorker.getLists(1));
-        groups.add(databaseWorker.getLists(2));
+         pageTitles = databaseWorker.getFilters();
+        numberOfFragments=pageTitles.size();
+        for(int i=1;i<=numberOfFragments;i++)
+        {
+            groups.add(databaseWorker.getLists(i));
+        }
+
         groupeNames.add(getString(R.string.yesterday));
         groupeNames.add(getString(R.string.today));
         groupeNames.add(getString(R.string.tomorrow));
+        groupeNames.add(getString(R.string.in_the_future));
+        databaseWorker.close();
 	}
 
 	@Override
@@ -134,7 +179,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 			// below) with the page number as its lone argument.
 			Fragment fragment = new DummySectionFragment();
 			Bundle args = new Bundle();
-			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position);
 			fragment.setArguments(args);
 			return fragment;
 		}
@@ -142,21 +187,22 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
-			return 3;
+            if(numberOfFragments ==0)
+            {
+                DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
+                pageTitles = databaseWorker.getFilters();
+                numberOfFragments=pageTitles.size();
+                databaseWorker.close();
+            }
+
+			return numberOfFragments;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
 			Locale l = Locale.getDefault();
-			switch (position) {
-			case 0:
-				return getString(R.string.title_section1).toUpperCase(l);
-			case 1:
-				return getString(R.string.title_section2).toUpperCase(l);
-			case 2:
-				return getString(R.string.title_section3).toUpperCase(l);
-			}
-			return null;
+
+			return pageTitles.get(position).filterName.toLowerCase();
 		}
 	}
 
@@ -214,8 +260,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	            //������� ����� ������ ��� ��������
 	            	
 	            //������� ������� � �������� context � ������ � �������
-	            ExpListAdapter adapter = new ExpListAdapter(rootView.getContext(), groups.get(--fragmentID),groupeNames);
-	            listView.setAdapter(adapter);
+	            ExpListAdapter adapter;
+            adapter = new ExpListAdapter(rootView.getContext(), groups.get(fragmentID),groupeNames);
+            listView.setAdapter(adapter);
 	            
 	            View rootView1 = inflater.inflate(R.layout.child_view, container, false);
 	            imageButton1= (ImageButton)rootView1.findViewById(R.id.imageButton);

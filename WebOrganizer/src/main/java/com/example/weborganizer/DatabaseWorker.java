@@ -11,6 +11,7 @@ import com.example.weborganizer.Containers.Filter;
 import com.example.weborganizer.Containers.Task;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Sasha on 04.11.13.
@@ -48,11 +49,12 @@ public class DatabaseWorker extends SQLiteOpenHelper{
     static final String collUserOptionsLastDateSync="Last_Sync_Date";
 
     private final static String PERSON_TABLE="CREATE TABLE "+tableUser+" ("+collId+" INTEGER PRIMARY KEY NOT NULL, "+
-            collEmail+" CHAR(50),"+collPass+" char(20), "+collFilterUserId+" INTEGER NOT NULL, FOREIGN KEY ("+
+            collEmail+" CHAR(50),"+collPass+" char(20), "+collFilterUserId+" INTEGER , FOREIGN KEY ("+
             collFilterUserId+") REFERENCES "+tableUser+" ("+collId+"));";
 
     private static final String FILTERS="CREATE TABLE "+tableFilter+" ("+collFilterName+" VARCHAR(40), "
-            +collFiltrId+" INTEGER PRIMARY KEY  AUTOINCREMENT);";
+            +collFiltrId+" INTEGER PRIMARY KEY  AUTOINCREMENT, "+collFilterUserId+" INTEGER , FOREIGN KEY ("
+            +collFilterUserId+") REFERENCES "+tableUser+" ("+collId+"));";
 
     private final static String TASKS="CREATE TABLE "+tableTask+" ("+collTaskTitle+" VARCHAR(80), "+collTaskText+" Text, "+collTaskTime
             +" TIME, "+collTaskDate+" DATE, "+collTaskLast_Editing+" DATETIME, "+collTaskEditType+" TINYINT, "+
@@ -188,8 +190,10 @@ public ArrayList<Task> getTasks()
         int col6 =cursor.getColumnIndex(collTaskEditType);
         int col7 =cursor.getColumnIndex(collTaskFilter);
         int col8=cursor.getColumnIndex(collUserId);
-        if(cursor.moveToFirst()){
-            do{
+        if(cursor.moveToFirst())
+        {
+            do
+            {
 
                 ans.add(new Task(cursor.getString(col1),cursor.getString(col2),cursor.getString(col3),cursor.getString(col4),
                         cursor.getString(col5),(byte)cursor.getShort(col6),cursor.getInt(col7),cursor.getInt(col8)));
@@ -200,7 +204,22 @@ public ArrayList<Task> getTasks()
         database.close();
         return ans;
     }
-    public void insertTsak(Task task){
+    public void insertFilter(int user_id,String filterName)
+    {
+        SQLiteDatabase database= this.getWritableDatabase();
+        try{
+
+            database.execSQL("INSERT INTO "+tableFilter+" ("+collFilterName+", "+collFilterUserId+")"+
+                    " VALUES ('"+filterName+"', '"+ 0 +"');");
+        }catch (Exception e){
+
+        }
+        finally {
+            database.close();
+        }
+    }
+    public void insertTask(Task task)
+    {
 
         SQLiteDatabase database= this.getWritableDatabase();
         try{
@@ -237,6 +256,7 @@ public ArrayList<Task> getTasks()
         SQLiteDatabase database= this.getReadableDatabase();
         String[] querys={   "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" <= DATE('now', '-1 day')",
                             "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" = DATE('now')",
+                            "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" = DATE('now', '+1 day')",
                             "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" >= DATE('now', '+1 day')"
         };
 //+collTaskFilter+" = "+filterGroupe+" AND "+collTaskDate
@@ -269,6 +289,7 @@ public ArrayList<Task> getTasks()
         }
         return ans;
     }
+
     public void printTable(String table){
         SQLiteDatabase database= this.getReadableDatabase();
         Cursor cursor  = database.rawQuery("SELECT *  FROM "+table,null);
@@ -277,9 +298,12 @@ public ArrayList<Task> getTasks()
         String[] cools =cursor.getColumnNames();
         int[] collsNum=new int[cools.length];
 
-        for(int i :collsNum){
-            i=cursor.getColumnIndex(cools[i]);
+
+        for(int i=0;i<cools.length;i++)
+        {
+            collsNum[i]=cursor.getColumnIndex(cools[i]);
         }
+        Log.d("ARR", Arrays.toString(collsNum)+" "+cools);
         StringBuilder stringBuilder = new StringBuilder();
 
         if(cursor.moveToFirst()){

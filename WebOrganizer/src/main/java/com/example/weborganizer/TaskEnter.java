@@ -163,7 +163,7 @@ public class TaskEnter extends Activity {
                     task.taskEditType=0;
                     task.userId=0;
                     TEMP.setText(task.toString());
-                    databaseWorker.insertTsak(task);
+                    databaseWorker.insertTask(task);
                 }else{
                     Toast.makeText(getApplicationContext(),getResources().getText(R.string.incorect_title), Toast.LENGTH_SHORT).show();
                 }

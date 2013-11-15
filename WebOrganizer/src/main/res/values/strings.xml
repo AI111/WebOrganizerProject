@@ -16,9 +16,12 @@
 
     <string name="yesterday">Вчера</string>
     <string name="today">Сегодня</string>
-    <string name="tomorrow">Завтро</string>
+    <string name="tomorrow">Завтра</string>
+    <string name="in_the_future">В будущем</string>
+
 
     <string name="incorect_title">введите название</string>
+    <string name="enter_filter_name">Введите название</string>
 
 
 </resources>
