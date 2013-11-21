@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -32,9 +30,10 @@ import com.example.weborganizer.Containers.Task;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends FragmentActivity implements OnClickListener {
+public class MainActivity extends FragmentActivity  {
 	 static ArrayList<ArrayList<ArrayList<Task>>> groups = new ArrayList<ArrayList<ArrayList<Task>>>();
-	    static ArrayList<String> groupeNames = new ArrayList<String>();
+	 static ArrayList<String> groupeNames = new ArrayList<String>();
+  //  static ArrayList<ExpListAdapter> adapters = new ArrayList<ExpListAdapter>();
 
 	    
 	/**
@@ -47,12 +46,13 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	 
-	int DIALOG_DATE = 1;
-	  int myYear = 2011;
-	  int myMonth = 02;
-	  int myDay = 03;
+
+	  int myYear;
+	  int myMonth;
+	  int myDay;
     int numberOfFragments;
-    private Context context;
+
+
     private ArrayList<Filter> pageTitles;
 
 	/**
@@ -69,17 +69,93 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	}
 
     @Override
+    protected void onRestart() {
+        Log.d("onRestart()()", " " + this.toString());
+//        for(ExpListAdapter listAdapter: adapters)
+//        {
+//            listAdapter.notifyDataSetChanged();
+//            Log.d("Updste", " " + listAdapter.toString());
+//        }
+        super.onRestart();
+    }
+
+
+
+    @Override
+    protected void onStart() {
+        Log.d("onStart()", " " + this.toString());
+//        if(!adapters.isEmpty()){
+//            onResume();
+//        }
+        Log.d("FragmentChildSuper", " " + this.toString());
+        DatabaseWorker databaseWorker = new DatabaseWorker(this);
+        pageTitles = databaseWorker.getFilters();
+        numberOfFragments=pageTitles.size();
+        groups.clear();
+        for(int i=1;i<=numberOfFragments;i++)
+        {
+            groups.add(databaseWorker.getLists(i));
+
+        }
+
+        groupeNames.add(getString(R.string.yesterday));
+        groupeNames.add(getString(R.string.today));
+        groupeNames.add(getString(R.string.tomorrow));
+        groupeNames.add(getString(R.string.in_the_future));
+        databaseWorker.close();
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("onPause()", " " + this.toString());
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("onDestroy()", " " + this.toString());
+        super.onDestroy();
+    }
+
+
+    @Override
+    protected void onResume() {
+
+//        for(ExpListAdapter listAdapter: adapters)
+//        {
+//            listAdapter.notifyDataSetChanged();
+//            Log.d("Updste", " " + listAdapter.toString());
+//        }
+        Log.d("ADAPTERS",""+groups.toString());
+
+        super.onResume();
+    }
+
+//    @Override
+//    protected void onResumeFragments() {
+//        Log.d("FragmentPhaser"," "+this.toString()+" "+adapters.size());
+//        super.onResume();
+//        super.onResumeFragments();
+//    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("8888888888888888888888888888888888888888888888", "");
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.item1:
                 Intent intent = new Intent(this,TaskEnter.class);
-                startActivity(intent);
+               startActivityForResult(intent, RESULT_OK);
+                
 
                 break;
             case R.id.item2:
-//                DatabaseWorker databaseWorker = new DatabaseWorker(this);
-//                databaseWorker.printTable(DatabaseWorker.tableFilter);
-//                databaseWorker.printTable(DatabaseWorker.tableTask);
+
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
                 alert.setTitle("Title");
@@ -97,17 +173,23 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                         databaseWorker.printTable(DatabaseWorker.tableFilter);
                         databaseWorker.insertFilter(0,value);
                         databaseWorker.printTable(DatabaseWorker.tableFilter);
-                        // Do something with value!
+                        databaseWorker.close();
+
                     }
                 });
 
                 alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
+
                     }
                 });
 
                 alert.show();
+                break;
+            case R.id.item3:
+                DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
+                databaseWorker.printTable(DatabaseWorker.tableTask);
+                databaseWorker.close();
                 break;
 
         }
@@ -138,19 +220,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		      //Toast.makeText(this, "Today is " + myDay + "/" + myMonth + "/" + myYear, Toast.LENGTH_SHORT).ma
 		    }
 		    };
-        DatabaseWorker databaseWorker = new DatabaseWorker(this);
-         pageTitles = databaseWorker.getFilters();
-        numberOfFragments=pageTitles.size();
-        for(int i=1;i<=numberOfFragments;i++)
-        {
-            groups.add(databaseWorker.getLists(i));
-        }
 
-        groupeNames.add(getString(R.string.yesterday));
-        groupeNames.add(getString(R.string.today));
-        groupeNames.add(getString(R.string.tomorrow));
-        groupeNames.add(getString(R.string.in_the_future));
-        databaseWorker.close();
+
 	}
 
 	@Override
@@ -182,6 +253,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position);
 			fragment.setArguments(args);
 			return fragment;
+
 		}
 
 		@Override
@@ -211,31 +283,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	 * displays dummy text.
 	 */
 	public static class DummySectionFragment extends Fragment {
+        ExpListAdapter adapter;
 		ImageButton imageButton1,imageButton2,imageButton3,imageButton4;
-		OnClickListener clickListener = new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-//				Toast.makeText(this, v.getId()+"", Toast.LENGTH_SHORT).show();
-				switch (v.getId()) {
-				case R.id.imageButton:
-			//showDialog(1);
-					break;
-				case R.id.imageButton1:
-					
-					break;
-				case R.id.imageButton2:
-			
-					break;
-				case R.id.imageButton3:
-			
-					break;
-				default:
-					break;
-				}
-			}
-		};
+        int fragmentID=-1;
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -243,47 +293,89 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		public static final String ARG_SECTION_NUMBER = "section_number";
 
 		public DummySectionFragment() {
+
 		}
 
-		@Override
+        @Override
+        public void onResume() {
+            Log.d("FragmentChild", getId() + " " + this.toString() + " ");
+            super.onResume();
+
+        }
+
+        @Override
+        public void onStart() {
+            Log.d("onStart()Child", getId() + " " + this.toString() + " ");
+            if(fragmentID!=-1){
+            adapter.update(groups.get(fragmentID));
+            adapter.notifyDataSetChanged();
+            adapter.notifyDataSetInvalidated();
+            }
+
+            super.onStart();
+        }
+
+        @Override
+        public void onPause() {
+            Log.d("onPause()Child", getId() + " " + this.toString() + " ");
+            super.onPause();
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            Log.d("onCreate()Child", getId() + " " + this.toString() + " ");
+            super.onCreate(savedInstanceState);
+        }
+
+        @Override
+        public void onDestroy() {
+            Log.d("onDestroy()Child", getId() + " " + this.toString() + " ");
+            super.onDestroy();
+        }
+
+        @Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-
+            Log.d("onCreateView", getId() + " " + this.toString() + " ");
 
 			 View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 	            ExpandableListView listView = (ExpandableListView)rootView.findViewById(R.id.expandableListView);
-	            
-	          int fragmentID= (int) getArguments().getInt(ARG_SECTION_NUMBER);
+             fragmentID= (int) getArguments().getInt(ARG_SECTION_NUMBER);
 
-	         //   imageButton1= (ImageButton)rootView.findViewById(R.id.imageButton);
-	         //  imageButton1.setOnClickListener(clickListener);
-	            //������� ����� ������ ��� ��������
-	            	
-	            //������� ������� � �������� context � ������ � �������
-	            ExpListAdapter adapter;
+
+
             adapter = new ExpListAdapter(rootView.getContext(), groups.get(fragmentID),groupeNames);
+//
+//	          listView.setOnChildClickListener(new OnChildClickListener() {
+//                  @Override
+//                  public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+//                      adapter.getChild(groupPosition,childPosition);
+//                      Log.d("CCCCCCCCCCCCCCCCCCCCCC", (((Task)adapter.getChild(groupPosition,childPosition))).toString());
+//
+//                      return true;
+//                  }
+//              });
+            listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+                @Override
+                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                    Log.d("GGGGGGGGGGGGGGG", "DDDDDDDDDDDDDDDD");
+                    return false;
+                }
+            });
             listView.setAdapter(adapter);
-	            
-	            View rootView1 = inflater.inflate(R.layout.child_view, container, false);
-	            imageButton1= (ImageButton)rootView1.findViewById(R.id.imageButton);
-	          imageButton2= (ImageButton)rootView1.findViewById(R.id.imageButton1);
-	          imageButton3= (ImageButton)rootView1.findViewById(R.id.imageButton2);
-	          imageButton4= (ImageButton)rootView1.findViewById(R.id.imageButton3);
-	          
-	          imageButton1.setOnClickListener(clickListener);
-	          imageButton2.setOnClickListener(clickListener);
-	          imageButton3.setOnClickListener(clickListener);
-	          imageButton4.setOnClickListener(clickListener);
+
+//            if(adapters.size()>fragmentID){
+//                adapters.set((fragmentID),adapter);
+//            }else
+//            {
+//                adapters.add(adapter);
+//            }
 
 			return rootView;
 		}
 	}
 
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-	
-	}
+
 
 
 }

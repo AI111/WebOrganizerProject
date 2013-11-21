@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,13 +42,25 @@ public class TaskEnter extends Activity {
     int DIALOG_TIME = 1;
     int DIALOG_DATE = 2;
     int myHour, myMinute , myYear , myMonth ,myDay ;
+    boolean update;
     DatabaseWorker databaseWorker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_enther);
-
         task= new Task(null,null,null,null,null, (byte) 0,0,0);
+        Intent intent = getIntent();
+        if(intent.hasExtra(DatabaseWorker.collTaskLast_Editing)){
+            task.taskTitle=getIntent().getStringExtra(DatabaseWorker.collTaskTitle);
+            task.taskText=intent.getStringExtra(DatabaseWorker.collTaskText);
+            task.taskTime=intent.getStringExtra(DatabaseWorker.collTaskTime);
+            task.taskDate=intent.getStringExtra(DatabaseWorker.collTaskDate);
+            task.lastTaskLastEditing=intent.getStringExtra(DatabaseWorker.collTaskLast_Editing);
+            task.taskFilterId=intent.getIntExtra(DatabaseWorker.collFiltrId,1);
+            Log.d("TASK",task.toString());
+            update=true;
+        }
+
 
         tvDate = (TextView) findViewById(R.id.textView2);
         tvTime=(TextView)findViewById(R.id.textView3);
@@ -57,30 +71,46 @@ public class TaskEnter extends Activity {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
         calendar.add(Calendar.DAY_OF_YEAR, 1);
+        if(task.taskDate==null){
+            tvDate.setText(format1.format(calendar.getTime()));
+            Date date = calendar.getTime();
 
-        tvDate.setText(format1.format(calendar.getTime()));
-        Date date = calendar.getTime();
+            myYear=calendar.get(Calendar.YEAR);//format1.format();
+            myMonth =calendar.get(Calendar.MONTH);
+            myDay=calendar.get(Calendar.DATE);
+            task.taskDate=myYear+"-"+myMonth+"-"+myDay;
+        }else{tvDate.setText(task.taskDate);}
 
-        myYear=calendar.get(Calendar.YEAR);//format1.format();
-        myMonth =calendar.get(Calendar.MONTH);
-        myDay=calendar.get(Calendar.DATE);
-        task.taskDate=myYear+"-"+myMonth+"-"+myDay;
+        if(task.taskTime==null)
+        {
+            tvTime.setText(new SimpleDateFormat("HH:mm:ss").format(calendar.getTime()));
+            myHour=calendar.get(Calendar.HOUR_OF_DAY);
+            myMinute=calendar.get(Calendar.MINUTE);
+            task.taskTime=myHour+":"+myMinute+":00";
+        }else{tvTime.setText(task.taskTime);}
+        if(task.taskText!=null||task.taskText!="null")
+        {
+            editText.setText(task.taskText);
+        }
+        if(task.taskTitle!=null)
+        {
+            editTitle.setText(task.taskTitle);
+        }
 //tvDate.setText(databaseWorker.getTasks().toString());
-        tvTime.setText(new SimpleDateFormat("HH:mm:ss").format(calendar.getTime()));
-        myHour=calendar.get(Calendar.HOUR_OF_DAY);
-        myMinute=calendar.get(Calendar.MINUTE);
-        task.taskTime=myHour+":"+myMinute+":00";
+
+
+
          databaseWorker =new DatabaseWorker(this);
         spinner= (Spinner) findViewById(R.id.spinner1);
 
         SpinnerAdapter spinnerAdapter  =  new SpinnerAdapter(this,android.R.layout.simple_spinner_item,databaseWorker.getFilters());
         spinner.setAdapter(spinnerAdapter);
-        // заголовок
-        spinner.setPrompt("Title");
-        // выделяем элемент
-        spinner.setSelection(0);
 
-        task.taskFilterId=1;
+        spinner.setPrompt("Title");
+
+        spinner.setSelection(task.taskFilterId-1);
+
+
 
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -136,7 +166,7 @@ public class TaskEnter extends Activity {
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
             myYear = year;
-            myMonth = monthOfYear;
+            myMonth = ++monthOfYear;
             myDay = dayOfMonth;
             tvDate.setText( myDay + "-" + myMonth + "-" + myYear);
             task.taskDate=year+"-"+monthOfYear+"-"+dayOfMonth;
@@ -163,8 +193,16 @@ public class TaskEnter extends Activity {
                     task.taskEditType=0;
                     task.userId=0;
                     TEMP.setText(task.toString());
-                    databaseWorker.insertTask(task);
+                    if(update){
+                        databaseWorker.update(task);
+                    }else{
+                        databaseWorker.insertTask(task);
+                    }
+                    Intent i = new Intent();
+                    setResult(RESULT_OK,i);
+                    finish();
                 }else{
+
                     Toast.makeText(getApplicationContext(),getResources().getText(R.string.incorect_title), Toast.LENGTH_SHORT).show();
                 }
                 break;

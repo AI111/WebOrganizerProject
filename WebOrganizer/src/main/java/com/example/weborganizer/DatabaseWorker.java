@@ -57,7 +57,7 @@ public class DatabaseWorker extends SQLiteOpenHelper{
             +collFilterUserId+") REFERENCES "+tableUser+" ("+collId+"));";
 
     private final static String TASKS="CREATE TABLE "+tableTask+" ("+collTaskTitle+" VARCHAR(80), "+collTaskText+" Text, "+collTaskTime
-            +" TIME, "+collTaskDate+" DATE, "+collTaskLast_Editing+" DATETIME, "+collTaskEditType+" TINYINT, "+
+            +" TIME, "+collTaskDate+" DATE, "+collTaskLast_Editing+" TIME, "+collTaskEditType+" TINYINT, "+
             collTaskFilter +" INTEGER  NOT NULL, "+collUserId+" INTEGER NOT NULL, FOREIGN KEY ("
             +collUserId+") REFERENCES "+tableUser+" ("+collId+"), "+" FOREIGN KEY ("+collTaskFilter+
             ") REFERENCES "+tableFilter+" ("+collFiltrId+"));";
@@ -101,7 +101,7 @@ public class DatabaseWorker extends SQLiteOpenHelper{
                 +", "+
                 "date('now')"
                 +", "+
-                "datetime(1092941466, 'unixepoch', 'localtime')"
+                "strftime('%s', 'now')"
                 +", '"+
                 "1"
                 +"', '"+
@@ -226,23 +226,8 @@ public ArrayList<Task> getTasks()
 
         database.execSQL("INSERT INTO "+tableTask+" ("+collTaskTitle+", "+collTaskText+", "+collTaskTime+", "+collTaskDate+", "+
                 collTaskLast_Editing+", "+collTaskEditType+", "+collTaskFilter+", "+collUserId+")"+
-                " VALUES ('"+
-                task.taskTitle
-                +"', '"+
-                task.taskText
-                +"', '"
-                +task.taskTime
-                +"', '"+
-                task.taskDate
-                +"', "+
-                "datetime(1092941466, 'unixepoch')"
-                +", '"+
-                "0"
-                +"', '"+
-                task.taskFilterId
-                +"', '"+
-                task.userId
-                +"');");
+                " VALUES ('"+task.taskTitle+"', '"+task.taskText+"', '"+task.taskTime+"', '"+task.taskDate
+                +"', "+"strftime('%s', 'now')"+", '"+"0"+"', '"+task.taskFilterId+"', '"+task.userId+"');");
         }catch (Exception e){
 
         }
@@ -254,10 +239,10 @@ public ArrayList<Task> getTasks()
     {
         ArrayList<ArrayList<Task>> ans = new ArrayList<ArrayList<Task>>();
         SQLiteDatabase database= this.getReadableDatabase();
-        String[] querys={   "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" <= DATE('now', '-1 day')",
-                            "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" = DATE('now')",
-                            "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" = DATE('now', '+1 day')",
-                            "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" >= DATE('now', '+1 day')"
+        String[] querys={   "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" < DATE('now') ORDER BY "+collTaskTime,
+                            "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" = DATE('now') ORDER BY "+collTaskTime,
+                            "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" = DATE('now', '+1 day') ORDER BY "+collTaskTime,
+                            "SELECT *  FROM "+tableTask+" WHERE "+collTaskFilter+" = '"+filterGroupe+"' AND "+collTaskDate+" > DATE('now', '+1 day') ORDER BY "+collTaskTime
         };
 //+collTaskFilter+" = "+filterGroupe+" AND "+collTaskDate
 
@@ -318,5 +303,24 @@ public ArrayList<Task> getTasks()
             Log.d(table,stringBuilder.toString());
     }
         database.close();
+    }
+    public void update(Task task){
+        SQLiteDatabase database= this.getWritableDatabase();
+        String query ="UPDATE  "+tableTask+" SET "+collTaskTitle+" = '"+task.taskTitle +"', "+collTaskText+
+                " = '"+task.taskText+"', "+collTaskTime+" = '"+task.taskTime+"', "+collTaskDate+" = '"+task.taskDate+"', "+
+                collTaskLast_Editing+" = strftime('%s', 'now')"+", "+collTaskEditType+" = '1', "+
+                collTaskFilter+" = '"+task.taskFilterId+"', "+collUserId+" = '"+task.userId+"' WHERE "+
+                collTaskLast_Editing+" = '"+task.lastTaskLastEditing+"'";
+
+        try{
+            Log.d("QUERY",query);
+            database.execSQL(query);
+        }catch (Exception e){
+            Log.d("QUERY",query);
+            e.printStackTrace();
+        }
+        finally {
+            database.close();
+        }
     }
 }

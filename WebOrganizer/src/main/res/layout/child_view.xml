@@ -2,22 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:clickable="false">
 
   <LinearLayout
-     
+
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
       android:layout_marginLeft="10dp"
       android:layout_marginTop="5dp"
-      android:layout_marginBottom="5dp">
+      android:layout_marginBottom="5dp"
+      android:clickable="false"
+      android:measureWithLargestChild="false">
+
+      <TextView
+          android:id="@+id/textView"
+          android:layout_width="280dp"
+          android:layout_height="wrap_content"
+          android:textColor="@android:color/black"
+          android:height="@dimen/abc_action_bar_title_text_size"
+          android:text="HELLOр"
+          android:layout_margin="5dp"
+          android:textAlignment="gravity" />
 
       <TextView
           android:id="@+id/textChild"
-          android:layout_width="fill_parent"
+          android:layout_width="wrap_content"
           android:layout_height="fill_parent"
-
           android:textColor="@android:color/black"
           android:height="@dimen/abc_action_bar_title_text_size"
           android:text="HELLOр"
@@ -30,28 +42,29 @@
       android:id="@+id/linearLayout22"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="@drawable/abc_menu_dropdown_panel_holo_dark">
+      android:background="@drawable/abc_menu_dropdown_panel_holo_dark"
+      android:clickable="false">
 
       <ImageButton
           android:id="@+id/imageButton"
-          android:layout_width="90dp"
+          android:layout_width="93dp"
           android:layout_height="wrap_content"
           android:background="@android:color/transparent"
           android:src="@android:drawable/ic_menu_add"
           android:layout_marginBottom="5dp"
-          android:layout_marginTop="5dp" />
+          android:layout_marginTop="7dp" />
 
       <ImageButton
           android:id="@+id/imageButton1"
-          android:layout_width="90dp"
+          android:layout_width="93dp"
           android:layout_height="wrap_content"
           android:background="@android:color/transparent"
           android:src="@android:drawable/ic_menu_delete"
           android:layout_marginBottom="5dp"
-          android:layout_marginTop="5dp" />
+          android:layout_marginTop="7dp" />
 
       <ImageButton
-          android:layout_width="90dp"
+          android:layout_width="93dp"
           android:layout_height="wrap_content"
           android:id="@+id/imageButton2"
           android:background="@android:color/transparent"
@@ -61,7 +74,7 @@
           android:layout_marginTop="5dp" />
 
       <ImageButton
-          android:layout_width="match_parent"
+          android:layout_width="93dp"
           android:layout_height="wrap_content"
           android:id="@+id/imageButton3"
           android:background="@android:color/transparent"
