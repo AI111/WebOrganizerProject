@@ -1,6 +1,9 @@
 package com.example.weborganizer;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,16 +21,20 @@ import com.example.weborganizer.Containers.Task;
 import java.util.ArrayList;
 
 public class ExpListAdapter extends BaseExpandableListAdapter {
+    TextView textChild,textChildDate,textView;
+     LinearLayout lr ,linearLayout ;
     Task task;
     ImageButton imageButton1,imageButton2,imageButton3,imageButton4;
 	private ArrayList<ArrayList<Task>> mGroups;
     private ArrayList<String> groupeNames;
-    private Context mContext;
+     static Context mContext;
     LinearLayout previosLL;
-    public ExpListAdapter (Context context,ArrayList<ArrayList<Task>> groups, ArrayList<String> groupeNames){
+    MainActivity.DummySectionFragment sectionFragment;
+    public ExpListAdapter (Context context,ArrayList<ArrayList<Task>> groups, ArrayList<String> groupeNames,MainActivity.DummySectionFragment sectionFragment ){
         mContext = context;
         mGroups = groups;
         this.groupeNames=groupeNames;
+        this.sectionFragment = sectionFragment;
         Log.d("ARR",groups.toString());
     }
     
@@ -87,8 +94,13 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
     }
     public void update(ArrayList<ArrayList<Task>> newData){
         this.mGroups=newData;
-    }
+        Log.d("UPDATE", newData.toString());
 
+    }
+    public void deleteDialog()
+    {
+        AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
+    }
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild,
                              View convertView, ViewGroup parent) {
@@ -101,13 +113,20 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
 		//animation=null;
         //final LinearLayout lr =(LinearLayout)convertView.findViewById(R.id.linearLayout22);
         //Log.d("CHILD",mGroups.get(1).get(childPosition).toString());
-        TextView textChild = (TextView) convertView.findViewById(R.id.textView);
-        TextView textChildDate = (TextView) convertView.findViewById(R.id.textChild);
+
+          lr =(LinearLayout)convertView.findViewById(R.id.linearLayout22);
+          linearLayout = (LinearLayout)convertView.findViewById(R.id.linearLayoutText);
+        textChild = (TextView) convertView.findViewById(R.id.textView);
+        textChildDate = (TextView) convertView.findViewById(R.id.textChild);
+        textView = (TextView)convertView.findViewById(R.id.ViewText);
         textChild.setText(mGroups.get(groupPosition).get(childPosition).taskTitle);
         textChildDate.setText(mGroups.get(groupPosition).get(childPosition).taskTime);
-        final LinearLayout lr =(LinearLayout)convertView.findViewById(R.id.linearLayout22);
+
+
+
 
     	lr.setVisibility(View.GONE);
+        linearLayout.setVisibility(View.GONE);
 //            lr.setOnClickListener(new OnClickListener() {
 //                @Override
 //                public void onClick(View v) {
@@ -129,7 +148,7 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
                  task =(Task) getChild(groupPosition,childPosition);
-                Log.d("CHILD", task.toString());
+               // Log.d("CHILD", task.toString());
 				if(lr.getVisibility()==View.VISIBLE){
 					lr.setVisibility(View.GONE);
 				}else{
@@ -154,9 +173,36 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
             switch (v.getId()) {
                 case R.id.imageButton:
                     //showDialog(1);
+                    if(linearLayout.getVisibility()==View.GONE)
+                    {
+                        linearLayout.setVisibility(View.VISIBLE);
+                        try {
+                            textView.setText(task.taskText);
+                        }catch (NullPointerException e){e.printStackTrace();}
+                    }else
+                    {
+                        linearLayout.setVisibility(View.GONE);
+                    }
+
+
                     Log.d("AAAAAAAAAAAAAAAAAAAA","DDDDDDDDDDDDDDDD");
                     break;
                 case R.id.imageButton1:
+                        AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
+                        // заголовок
+                        adb.setTitle("cxcxc");
+                        // сообщение
+                        adb.setMessage(R.string.delete_dialog);
+                        // иконка
+                        adb.setIcon(android.R.drawable.ic_dialog_info);
+                        // кнопка положительного ответа
+                        adb.setPositiveButton(R.string.yes, myClickListener);
+                        // кнопка отрицательного ответа
+                        adb.setNegativeButton(R.string.no, myClickListener);
+
+                    adb.show();
+
+
 
                     break;
                 case R.id.imageButton2:
@@ -173,7 +219,26 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
                     mContext.startActivity(intent);
 
                     break;
+
                 default:
+                    break;
+            }
+        }
+    };
+    DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which)
+            {
+                case Dialog.BUTTON_POSITIVE:
+                Log.d("AAAAAAAAAAAAAAAAAAAA","POSITIVE");
+
+                    MainActivity.databaseWorker.deleteTaskRow(task.lastTaskLastEditing);
+                    //databaseWorker.close();
+                    sectionFragment.updateELV();
+                    break;
+                case Dialog.BUTTON_NEGATIVE:
+                Log.d("AAAAAAAAAAAAAAAAAAAA","NEGATIVE");
                     break;
             }
         }

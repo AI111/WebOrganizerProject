@@ -34,7 +34,7 @@ public class MainActivity extends FragmentActivity  {
 	 static ArrayList<ArrayList<ArrayList<Task>>> groups = new ArrayList<ArrayList<ArrayList<Task>>>();
 	 static ArrayList<String> groupeNames = new ArrayList<String>();
   //  static ArrayList<ExpListAdapter> adapters = new ArrayList<ExpListAdapter>();
-
+    static  DatabaseWorker databaseWorker ;
 	    
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -88,7 +88,7 @@ public class MainActivity extends FragmentActivity  {
 //            onResume();
 //        }
         Log.d("FragmentChildSuper", " " + this.toString());
-        DatabaseWorker databaseWorker = new DatabaseWorker(this);
+       // DatabaseWorker databaseWorker = new DatabaseWorker(this);
         pageTitles = databaseWorker.getFilters();
         numberOfFragments=pageTitles.size();
         groups.clear();
@@ -102,7 +102,7 @@ public class MainActivity extends FragmentActivity  {
         groupeNames.add(getString(R.string.today));
         groupeNames.add(getString(R.string.tomorrow));
         groupeNames.add(getString(R.string.in_the_future));
-        databaseWorker.close();
+       // databaseWorker.close();
         super.onStart();
     }
 
@@ -169,11 +169,11 @@ public class MainActivity extends FragmentActivity  {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String value = input.getText().toString();
                         Log.d("DIALOG",value);
-                        DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
+                      //  DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
                         databaseWorker.printTable(DatabaseWorker.tableFilter);
                         databaseWorker.insertFilter(0,value);
                         databaseWorker.printTable(DatabaseWorker.tableFilter);
-                        databaseWorker.close();
+                       // databaseWorker.close();
 
                     }
                 });
@@ -187,9 +187,9 @@ public class MainActivity extends FragmentActivity  {
                 alert.show();
                 break;
             case R.id.item3:
-                DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
+                //DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
                 databaseWorker.printTable(DatabaseWorker.tableTask);
-                databaseWorker.close();
+               // databaseWorker.close();
                 break;
 
         }
@@ -200,7 +200,7 @@ public class MainActivity extends FragmentActivity  {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+        databaseWorker = new DatabaseWorker(this);
         //imageButton5= (ImageButton)findViewById(R.id.imageButton);
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
@@ -261,10 +261,10 @@ public class MainActivity extends FragmentActivity  {
 			// Show 3 total pages.
             if(numberOfFragments ==0)
             {
-                DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
+               // DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
                 pageTitles = databaseWorker.getFilters();
                 numberOfFragments=pageTitles.size();
-                databaseWorker.close();
+               // databaseWorker.close();
             }
 
 			return numberOfFragments;
@@ -295,10 +295,18 @@ public class MainActivity extends FragmentActivity  {
 		public DummySectionFragment() {
 
 		}
+        public void  updateELV(){
 
+            groups.set(fragmentID, databaseWorker.getLists((fragmentID+1)));
+
+            adapter.update(groups.get(fragmentID));
+            adapter.notifyDataSetChanged();
+           // adapter.notifyDataSetInvalidated();
+            Log.d("updateELV()", getId() + " " + this.toString() + " ");
+        }
         @Override
         public void onResume() {
-            Log.d("FragmentChild", getId() + " " + this.toString() + " ");
+            Log.d("FragmentChild", databaseWorker.getLists((fragmentID+1)).toString()+" "+fragmentID);
             super.onResume();
 
         }
@@ -344,7 +352,7 @@ public class MainActivity extends FragmentActivity  {
 
 
 
-            adapter = new ExpListAdapter(rootView.getContext(), groups.get(fragmentID),groupeNames);
+            adapter = new ExpListAdapter(rootView.getContext(), groups.get(fragmentID),groupeNames,this);
 //
 //	          listView.setOnChildClickListener(new OnChildClickListener() {
 //                  @Override

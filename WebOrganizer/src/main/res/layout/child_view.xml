@@ -38,7 +38,29 @@
 
   </LinearLayout>
 
-  <LinearLayout
+    <LinearLayout
+        android:divider="?android:dividerHorizontal"
+        android:showDividers="middle"
+        android:id="@+id/linearLayoutText"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/ViewText"
+            android:layout_margin="5dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
       android:id="@+id/linearLayout22"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -50,7 +72,7 @@
           android:layout_width="93dp"
           android:layout_height="wrap_content"
           android:background="@android:color/transparent"
-          android:src="@android:drawable/ic_menu_add"
+          android:src="@drawable/ic_action_view_as_list"
           android:layout_marginBottom="5dp"
           android:layout_marginTop="7dp" />
 

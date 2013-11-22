@@ -68,7 +68,8 @@
         android:onClick="onclick"
         android:layout_margin="5dp"
         style="@style/TextAppearance.AppCompat.Base.SearchResult"
-        android:gravity="left" />
+        android:gravity="left"
+        android:background="@drawable/abc_spinner_ab_default_holo_light" />
 
     <TextView
         android:layout_width="match_parent"
@@ -86,15 +87,4 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" />
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="New Text"
-        android:id="@+id/textView"
-        style="@style/TextAppearance.AppCompat.Base.SearchResult"
-        android:lines="@integer/abc_max_action_buttons"
-        android:singleLine="false"
-        android:textAlignment="center"
-        android:typeface="normal"
-        android:visibility="visible" />
 </LinearLayout>

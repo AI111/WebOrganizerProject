@@ -23,5 +23,10 @@
     <string name="incorect_title">введите название</string>
     <string name="enter_filter_name">Введите название</string>
 
+    <string name="yes">да</string>
+    <string name="no">нет</string>
+
+    <string name="delete_dialog">Вы уверены</string>
+
 
 </resources>
