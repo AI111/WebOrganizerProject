@@ -35,7 +35,7 @@ public class MainActivity extends FragmentActivity  {
 	 static ArrayList<String> groupeNames = new ArrayList<String>();
   //  static ArrayList<ExpListAdapter> adapters = new ArrayList<ExpListAdapter>();
     static  DatabaseWorker databaseWorker ;
-	    
+	    ImageButton lblButton ;
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -45,7 +45,7 @@ public class MainActivity extends FragmentActivity  {
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
-	 
+
 
 	  int myYear;
 	  int myMonth;
@@ -71,11 +71,6 @@ public class MainActivity extends FragmentActivity  {
     @Override
     protected void onRestart() {
         Log.d("onRestart()()", " " + this.toString());
-//        for(ExpListAdapter listAdapter: adapters)
-//        {
-//            listAdapter.notifyDataSetChanged();
-//            Log.d("Updste", " " + listAdapter.toString());
-//        }
         super.onRestart();
     }
 
@@ -89,6 +84,11 @@ public class MainActivity extends FragmentActivity  {
 //        }
         Log.d("FragmentChildSuper", " " + this.toString());
        // DatabaseWorker databaseWorker = new DatabaseWorker(this);
+       update();
+       // databaseWorker.close();
+        super.onStart();
+    }
+    public void update(){
         pageTitles = databaseWorker.getFilters();
         numberOfFragments=pageTitles.size();
         groups.clear();
@@ -102,10 +102,7 @@ public class MainActivity extends FragmentActivity  {
         groupeNames.add(getString(R.string.today));
         groupeNames.add(getString(R.string.tomorrow));
         groupeNames.add(getString(R.string.in_the_future));
-       // databaseWorker.close();
-        super.onStart();
     }
-
     @Override
     protected void onPause() {
         Log.d("onPause()", " " + this.toString());
@@ -123,30 +120,29 @@ public class MainActivity extends FragmentActivity  {
     @Override
     protected void onResume() {
 
-//        for(ExpListAdapter listAdapter: adapters)
-//        {
-//            listAdapter.notifyDataSetChanged();
-//            Log.d("Updste", " " + listAdapter.toString());
-//        }
         Log.d("ADAPTERS",""+groups.toString());
 
         super.onResume();
     }
-
-//    @Override
-//    protected void onResumeFragments() {
-//        Log.d("FragmentPhaser"," "+this.toString()+" "+adapters.size());
-//        super.onResume();
-//        super.onResumeFragments();
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("8888888888888888888888888888888888888888888888", "");
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //ClipData.Item item1 = (ClipData.Item)item.findViewById(R.id.item2);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return false;
+            }
+
+        });
+
         switch (item.getItemId()){
             case R.id.item1:
                 Intent intent = new Intent(this,TaskEnter.class);
@@ -158,8 +154,8 @@ public class MainActivity extends FragmentActivity  {
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-                alert.setTitle("Title");
-                alert.setMessage("Message");
+                alert.setTitle(getString(R.string.add_tag));
+                alert.setMessage(getString(R.string.add_tag_text));
 
 // Set an EditText view to get user input
                 final EditText input = new EditText(this);
@@ -171,9 +167,11 @@ public class MainActivity extends FragmentActivity  {
                         Log.d("DIALOG",value);
                       //  DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
                         databaseWorker.printTable(DatabaseWorker.tableFilter);
-                        databaseWorker.insertFilter(0,value);
+                        databaseWorker.insertFilter(value);
                         databaseWorker.printTable(DatabaseWorker.tableFilter);
-                       // databaseWorker.close();
+                        mSectionsPagerAdapter.getCount();
+                        update();
+                        mSectionsPagerAdapter.notifyDataSetChanged();
 
                     }
                 });
@@ -188,8 +186,14 @@ public class MainActivity extends FragmentActivity  {
                 break;
             case R.id.item3:
                 //DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
-                databaseWorker.printTable(DatabaseWorker.tableTask);
+                Intent intent1 = new Intent(this,ContactsActivity.class);
+                startActivity(intent1);
+                //databaseWorker.printTable(DatabaseWorker.tableTask);
                // databaseWorker.close();
+                break;
+            case R.id.item4:
+                Intent intent2=new Intent(this,Test.class);
+                startActivity(intent2);
                 break;
 
         }
@@ -206,7 +210,7 @@ public class MainActivity extends FragmentActivity  {
 		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
-
+       // lblButton=CustomActionProvider.getBtn();
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -228,7 +232,7 @@ public class MainActivity extends FragmentActivity  {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		
+
 		return true;
 		
 	}
@@ -274,7 +278,7 @@ public class MainActivity extends FragmentActivity  {
 		public CharSequence getPageTitle(int position) {
 			Locale l = Locale.getDefault();
 
-			return pageTitles.get(position).filterName.toLowerCase();
+			return pageTitles.get(position).filterName.toUpperCase();
 		}
 	}
 
@@ -353,16 +357,6 @@ public class MainActivity extends FragmentActivity  {
 
 
             adapter = new ExpListAdapter(rootView.getContext(), groups.get(fragmentID),groupeNames,this);
-//
-//	          listView.setOnChildClickListener(new OnChildClickListener() {
-//                  @Override
-//                  public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-//                      adapter.getChild(groupPosition,childPosition);
-//                      Log.d("CCCCCCCCCCCCCCCCCCCCCC", (((Task)adapter.getChild(groupPosition,childPosition))).toString());
-//
-//                      return true;
-//                  }
-//              });
             listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
                 @Override
                 public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {

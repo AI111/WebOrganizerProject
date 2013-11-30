@@ -3,14 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/item1"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/ic_action_new"
         android:showAsAction="always"
         android:title="@string/item1">
     </item>
     <item
         android:id="@+id/item2"
-        android:icon="@android:drawable/ic_menu_agenda"
-        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_new"
+        android:showAsAction="always"
+        android:actionProviderClass="com.example.weborganizer.test.CustomActionProvider"
         android:title="@string/item2">
     </item>
     <item

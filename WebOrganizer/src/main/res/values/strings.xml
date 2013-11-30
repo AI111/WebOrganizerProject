@@ -28,5 +28,14 @@
 
     <string name="delete_dialog">Вы уверены</string>
 
+    <string name="add_tag">Добавить метку</string>
+    <string name="add_tag_text">Метка</string>
+
+
+    <string name="contact_name">Имя</string>
+    <string name="contact_sername">Фамилия</string>
+    <string name="contact_phone">Телефон</string>
+    <string name="contact_email">email</string>
+    <string name="contact_date">Дата</string>
 
 </resources>

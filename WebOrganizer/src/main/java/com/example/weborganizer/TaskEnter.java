@@ -56,7 +56,7 @@ public class TaskEnter extends Activity {
             task.taskTime=intent.getStringExtra(DatabaseWorker.collTaskTime);
             task.taskDate=intent.getStringExtra(DatabaseWorker.collTaskDate);
             task.lastTaskLastEditing=intent.getStringExtra(DatabaseWorker.collTaskLast_Editing);
-            task.taskFilterId=intent.getIntExtra(DatabaseWorker.collFiltrId,1);
+            task.taskFilterId=intent.getIntExtra(DatabaseWorker.collTaskFilter,2);
             Log.d("TASK",task.toString());
             update=true;
         }
@@ -79,7 +79,12 @@ public class TaskEnter extends Activity {
             myMonth =calendar.get(Calendar.MONTH);
             myDay=calendar.get(Calendar.DATE);
             task.taskDate=myYear+"-"+myMonth+"-"+myDay;
-        }else{tvDate.setText(task.taskDate);}
+        }else{tvDate.setText(task.taskDate);
+//            String[] arr=task.taskDate.split("-");
+//            myYear=calendar.get(Integer.getInteger(arr[0]));//format1.format();
+//            myMonth =calendar.get(Integer.getInteger(arr[1]));
+//            myDay=calendar.get(Integer.getInteger(arr[2]));
+        }
 
         if(task.taskTime==null)
         {
@@ -192,10 +197,11 @@ public class TaskEnter extends Activity {
                     }
                     task.taskEditType=0;
                     task.userId=0;
-                    TEMP.setText(task.toString());
+                   // TEMP.setText(task.toString());
                     if(update){
                         databaseWorker.update(task);
                     }else{
+                        Log.d("ADD",task.toString());
                         databaseWorker.insertTask(task);
                     }
                     Intent i = new Intent();
@@ -207,7 +213,7 @@ public class TaskEnter extends Activity {
                 }
                 break;
             case R.id.item2:
-                TEMP.setText(databaseWorker.getTasks().toString());
+                //TEMP.setText(databaseWorker.getTasks().toString());
 
                 break;
         }

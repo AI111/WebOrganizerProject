@@ -147,15 +147,18 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+                LinearLayout ll =(LinearLayout)arg0.findViewById(R.id.linearLayout22);
                  task =(Task) getChild(groupPosition,childPosition);
-               // Log.d("CHILD", task.toString());
-				if(lr.getVisibility()==View.VISIBLE){
-					lr.setVisibility(View.GONE);
+                Log.d("CHILD", task.toString());
+				if(ll.getVisibility()==View.VISIBLE){
+                    ll.setVisibility(View.GONE);
 				}else{
-					lr.setVisibility(View.VISIBLE);
-                    if(previosLL!=null&&previosLL.getVisibility()==View.VISIBLE&&previosLL!=lr){
+                    linearLayout=(LinearLayout)arg0.findViewById(R.id.linearLayoutText);
+                    ll.setVisibility(View.VISIBLE);
+                    if(previosLL!=null&&previosLL.getVisibility()==View.VISIBLE&&previosLL!=ll){
                         previosLL.setVisibility(View.GONE);
-                    }if(previosLL!=lr)previosLL=lr;
+                    }//if(previosLL!=lr)previosLL=ll;
+                    previosLL=ll;
 				}
 			//lr.getVisibility()=View.VISIBLE ? lr.setVisibility(Viev.GONE):lr.setVisibility(View.VISIBLE)
 			}
@@ -190,7 +193,7 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
                 case R.id.imageButton1:
                         AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
                         // заголовок
-                        adb.setTitle("cxcxc");
+                        adb.setTitle("Удаление");
                         // сообщение
                         adb.setMessage(R.string.delete_dialog);
                         // иконка
