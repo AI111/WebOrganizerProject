@@ -1,9 +1,11 @@
 package com.example.weborganizer;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,25 +20,40 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.list2.R;
 import com.example.weborganizer.Containers.Filter;
 import com.example.weborganizer.Containers.Task;
+import com.example.weborganizer.test.SpinnerNavItem;
+import com.example.weborganizer.test.Test;
+import com.example.weborganizer.test.TitleNavigationAdapter;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends FragmentActivity  {
+public class MainActivity extends FragmentActivity   {
 	 static ArrayList<ArrayList<ArrayList<Task>>> groups = new ArrayList<ArrayList<ArrayList<Task>>>();
 	 static ArrayList<String> groupeNames = new ArrayList<String>();
-  //  static ArrayList<ExpListAdapter> adapters = new ArrayList<ExpListAdapter>();
+
     static  DatabaseWorker databaseWorker ;
-	    ImageButton lblButton ;
-	/**
+    SpinnerAdapter spinnerAdapter;
+	 boolean create;
+
+    Context context;
+    // Title navigation Spinner data
+    private ArrayList<SpinnerNavItem> navSpinner,navItems;
+
+    // Navigation adapter
+    private TitleNavigationAdapter adapter,adapter1;
+
+    /**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
 	 * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
@@ -59,6 +76,7 @@ public class MainActivity extends FragmentActivity  {
 	 * The {@link android.support.v4.view.ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+
 	private OnDateSetListener myCallBack;
 	@Override
 	@Deprecated
@@ -124,65 +142,20 @@ public class MainActivity extends FragmentActivity  {
 
         super.onResume();
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("8888888888888888888888888888888888888888888888", "");
-    }
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //ClipData.Item item1 = (ClipData.Item)item.findViewById(R.id.item2);
-        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return false;
-            }
 
-        });
 
         switch (item.getItemId()){
             case R.id.item1:
-                Intent intent = new Intent(this,TaskEnter.class);
-               startActivityForResult(intent, RESULT_OK);
-                
+
 
                 break;
             case R.id.item2:
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-                alert.setTitle(getString(R.string.add_tag));
-                alert.setMessage(getString(R.string.add_tag_text));
-
-// Set an EditText view to get user input
-                final EditText input = new EditText(this);
-                alert.setView(input);
-
-                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String value = input.getText().toString();
-                        Log.d("DIALOG",value);
-                      //  DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
-                        databaseWorker.printTable(DatabaseWorker.tableFilter);
-                        databaseWorker.insertFilter(value);
-                        databaseWorker.printTable(DatabaseWorker.tableFilter);
-                        mSectionsPagerAdapter.getCount();
-                        update();
-                        mSectionsPagerAdapter.notifyDataSetChanged();
-
-                    }
-                });
-
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                });
-
-                alert.show();
+               databaseWorker.printTable(DatabaseWorker.tableFilter);
+                databaseWorker.printTable(DatabaseWorker.tableTask);
                 break;
             case R.id.item3:
                 //DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
@@ -204,6 +177,7 @@ public class MainActivity extends FragmentActivity  {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+        this.context=getApplicationContext();
         databaseWorker = new DatabaseWorker(this);
         //imageButton5= (ImageButton)findViewById(R.id.imageButton);
 		// Create the adapter that will return a fragment for each of the three
@@ -225,9 +199,116 @@ public class MainActivity extends FragmentActivity  {
 		    }
 		    };
 
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
 
+
+        LayoutInflater inflator = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View v = inflator.inflate(R.layout.custom_action_bar, null);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+//
+//        // Spinner title navigation data
+        final Spinner spinner = (Spinner)v.findViewById(R.id.spinner);
+
+        ImageButton imageButton =(ImageButton)v.findViewById(R.id.imageButton);
+        ImageButton imageButton1=(ImageButton)v.findViewById(R.id.imageButton2);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+               // spinnerAdapter.update(databaseWorker.getFilters());
+                if(create){
+                Log.d("FILTERS",databaseWorker.getFilters().toString());
+                Filter f = (Filter)parent.getItemAtPosition(position);
+                    databaseWorker.deleteFilters(f);
+                Toast.makeText(getBaseContext(), f.filterId+" del "+f.filterName, Toast.LENGTH_SHORT).show();
+
+                update();
+                mSectionsPagerAdapter.notifyDataSetChanged();
+                }else{
+                    create=true;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,TaskEnter.class);
+                startActivityForResult(intent, RESULT_OK);
+
+            }
+        });
+        imageButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(getBaseContext(), "Long", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+        imageButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFilter();
+            }
+        });
+        imageButton1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                spinnerAdapter.clear();
+                spinnerAdapter.addAll(databaseWorker.getFilters());
+                //spinnerAdapter.update(databaseWorker.getFilters());
+                spinnerAdapter.notifyDataSetChanged();
+                Log.d("FILTERS",databaseWorker.getFilters().toString());
+                spinner.performClick();
+                return true;
+            }
+        });
+
+       spinnerAdapter  = new SpinnerAdapter(this,android.R.layout.simple_spinner_item,databaseWorker.getFilters());
+        spinner.setAdapter(spinnerAdapter);
+        actionBar.setCustomView(v);
 	}
+    void addFilter(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
+        alert.setTitle(getString(R.string.add_tag));
+        alert.setMessage(getString(R.string.add_tag_text));
+
+// Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = input.getText().toString();
+                Log.d("DIALOG",value);
+                //  DatabaseWorker databaseWorker = new DatabaseWorker(getBaseContext());
+                databaseWorker.printTable(DatabaseWorker.tableFilter);
+                databaseWorker.insertFilter(value);
+                databaseWorker.printTable(DatabaseWorker.tableFilter);
+                mSectionsPagerAdapter.getCount();
+                update();
+                mSectionsPagerAdapter.notifyDataSetChanged();
+
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+            }
+        });
+
+        alert.show();
+    }
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -376,8 +457,5 @@ public class MainActivity extends FragmentActivity  {
 			return rootView;
 		}
 	}
-
-
-
 
 }

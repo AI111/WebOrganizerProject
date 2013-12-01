@@ -17,10 +17,15 @@ import java.util.ArrayList;
  */
 public class SpinnerAdapter extends ArrayAdapter<Filter> {
 Context context;
+
     public SpinnerAdapter(Context context, int textViewResourceId, ArrayList<Filter> items) {
         super(context, textViewResourceId, items);
         this.context = context;
+
     }
+
+
+
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         if (view == null) {

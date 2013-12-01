@@ -93,7 +93,7 @@
 
           android:src="@android:drawable/ic_menu_my_calendar"
           android:layout_marginBottom="5dp"
-          android:layout_marginTop="5dp" />
+          android:layout_marginTop="7dp" />
 
       <ImageButton
           android:layout_width="93dp"

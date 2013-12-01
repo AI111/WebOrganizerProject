@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/actionButtonStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="right"
+    android:focusable="true"
+    android:baselineAligned="false"
+    android:showDividers="middle"
+    android:gravity="right">
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_gravity="center_vertical|right"
+        android:spinnerMode="dialog"
+        android:visibility="invisible" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/imageButton"
+        android:cropToPadding="false"
+        android:layout_alignParentRight="true"
+        android:background="#242424"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/ic_action_new" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/imageButton2"
+        android:background="#242424"
+        android:src="@drawable/ic_action_labels" />
+
+</LinearLayout>

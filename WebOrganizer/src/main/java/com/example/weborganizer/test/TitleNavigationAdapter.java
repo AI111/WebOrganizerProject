@@ -23,11 +23,14 @@ public class TitleNavigationAdapter extends BaseAdapter {
     private TextView txtTitle;
     private ArrayList<SpinnerNavItem> spinnerNavItem;
     private Context context;
-
+    int icon;
+    String text;
     public TitleNavigationAdapter(Context context,
-                                  ArrayList<SpinnerNavItem> spinnerNavItem) {
+                                  ArrayList<SpinnerNavItem> spinnerNavItem, int icon,String text) {
         this.spinnerNavItem = spinnerNavItem;
         this.context = context;
+        this.icon=icon;
+        this.text=text;
     }
 
     @Override
@@ -56,9 +59,9 @@ public class TitleNavigationAdapter extends BaseAdapter {
         imgIcon = (ImageView) convertView.findViewById(R.id.imgIcon);
         txtTitle = (TextView) convertView.findViewById(R.id.txtTitle);
 
-        imgIcon.setImageResource(spinnerNavItem.get(position).getIcon());
-        imgIcon.setVisibility(View.GONE);
-        txtTitle.setText(spinnerNavItem.get(position).getTitle());
+        imgIcon.setImageResource(icon);
+        imgIcon.setVisibility(View.VISIBLE);
+        if(text!=null)txtTitle.setText(text);
         return convertView;
     }
 

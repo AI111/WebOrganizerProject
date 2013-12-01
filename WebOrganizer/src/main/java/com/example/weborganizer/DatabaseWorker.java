@@ -237,6 +237,20 @@ public ArrayList<Task> getTasks()
             database.close();
         }
     }
+   public void deleteFilters(Filter f){
+
+           SQLiteDatabase database =this.getWritableDatabase();
+       try{
+           String query ="DELETE FROM "+tableFilter+" WHERE "+collFiltrId+" = '"+f.filterId+"' ";
+           Log.d("MESSEGE",query);
+           database.execSQL(query);
+       }catch (Exception e){
+           e.printStackTrace();
+       }
+       finally {
+          database.close();
+       }
+   }
     public void insertTask(Task task)
     {
 

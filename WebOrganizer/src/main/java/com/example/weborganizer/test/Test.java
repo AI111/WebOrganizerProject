@@ -1,4 +1,4 @@
-package com.example.weborganizer;
+package com.example.weborganizer.test;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.list2.R;
+import com.example.weborganizer.DatabaseWorker;
 
 /**
  * Created by Sasha on 28.11.13.

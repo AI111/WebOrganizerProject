@@ -83,6 +83,8 @@
         android:id="@+id/textView4"
         android:layout_gravity="left"
         android:background="@drawable/abc_spinner_ab_default_holo_light"
-        android:layout_margin="5dp" />
+        android:layout_margin="5dp"
+        android:clickable="true"
+        android:onClick="onclick" />
 
 </LinearLayout>

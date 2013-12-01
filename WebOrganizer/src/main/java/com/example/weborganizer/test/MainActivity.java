@@ -9,12 +9,13 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.list2.R;
 
@@ -26,10 +27,10 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     private ActionBar actionBar;
 
     // Title navigation Spinner data
-    private ArrayList<SpinnerNavItem> navSpinner;
+    private ArrayList<SpinnerNavItem> navSpinner,navItems;
 
     // Navigation adapter
-    private TitleNavigationAdapter adapter;
+    private TitleNavigationAdapter adapter,adapter1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
 
         LayoutInflater inflator = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View v = inflator.inflate(R.layout.search, null);
+        View v = inflator.inflate(R.layout.custom_action_bar, null);
 
 
 
@@ -53,21 +54,41 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
 //        actionBar.setDisplayShowTitleEnabled(false);
 //
 //        // Enabling Spinner dropdown navigation
-       actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+       actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 //
 //        // Spinner title navigation data
-        Spinner spinner = (Spinner)v.findViewById(R.id.spinner);
+       // Spinner spinner = (Spinner)v.findViewById(R.id.spinner);
+       // Spinner spinner1 =(Spinner)v.findViewById(R.id.spinner2);
+
+//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(getBaseContext(), "Short", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+
         navSpinner = new ArrayList<SpinnerNavItem>();
-        navSpinner.add(new SpinnerNavItem("Local", R.drawable.ic_action_new));
-        navSpinner.add(new SpinnerNavItem("My Places", R.drawable.abc_ic_clear));
-        navSpinner.add(new SpinnerNavItem("Checkins", R.drawable.ic_action_labels));
-        navSpinner.add(new SpinnerNavItem("Latitude", R.drawable.icon));
+        navSpinner.add(new SpinnerNavItem("", R.drawable.ic_action_new));
+        navSpinner.add(new SpinnerNavItem("", R.drawable.abc_ic_clear));
+        navSpinner.add(new SpinnerNavItem("", R.drawable.ic_action_labels));
+        //navSpinner.add(new SpinnerNavItem("", R.drawable.icon));
+        navItems=new ArrayList<SpinnerNavItem>();
+        navItems.add(new SpinnerNavItem("Contacts", R.drawable.ic_action_new));
+        navItems.add(new SpinnerNavItem("EXIT", R.drawable.abc_ic_clear));
+        navItems.add(new SpinnerNavItem("SIGN in", R.drawable.ic_action_labels));
 
         // title drop down adapter
-        adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
-        spinner.setAdapter(adapter);
-//
+        adapter1=new TitleNavigationAdapter(getApplicationContext(),navItems,R.drawable.abc_ic_menu_moreoverflow_normal_holo_dark,null);
+        adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner,R.drawable.ic_action_labels,null);
+//        spinner.setAdapter(adapter);
+//        spinner1.setAdapter(adapter1);
         actionBar.setCustomView(v);
+
 //        // assigning the spinner navigation
 //        LayoutInflater layoutInflater = LayoutInflater.from(this);
 //        View view = layoutInflater.inflate(R.layout.test_btn, null);
@@ -90,7 +111,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
      * */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-      //  Toast.makeText(getBaseContext(), "Short", Toast.LENGTH_SHORT).show();
+       Toast.makeText(getBaseContext(), "Short", Toast.LENGTH_SHORT).show();
        return  false;
     }
 
@@ -100,13 +121,15 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
         // Action to be taken after selecting a spinner item
-      //  Toast.makeText(getBaseContext(), "Short", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getBaseContext(), "Selected", Toast.LENGTH_SHORT).show();
+        Log.d("BTN", itemPosition + " " + itemId);
         return false;
     }
 
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-      //  Toast.makeText(getBaseContext(), "Short", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getBaseContext(), "long press", Toast.LENGTH_SHORT).show();
+        Log.d("BTN", keyCode + " " + event.getAction());
         return super.onKeyLongPress(keyCode, event);
     }
 }

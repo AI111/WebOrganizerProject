@@ -12,6 +12,6 @@
         android:id="@+id/textView4"
         android:singleLine="false"
         android:textStyle="bold"
-        android:layout_marginRight="-3dp" />
+        android:layout_margin="5dp" />
 
 </LinearLayout>
